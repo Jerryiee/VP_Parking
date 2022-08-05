@@ -49,7 +49,7 @@ def full():
     uart.write(full)
     
 
-send_serial("9991")
+send_serial("999ssssss1")
 #full()
     
 

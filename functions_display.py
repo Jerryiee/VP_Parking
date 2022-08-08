@@ -1,6 +1,5 @@
-import time
+from time import sleep
 import serial
-import string
 
 uart = serial.Serial(
         port='/dev/ttyS0', #Replace ttyS0 with ttyAM0 for Pi1,Pi2,Pi0
@@ -42,15 +41,15 @@ def send_serial(i):
     delay_uart()
     
 def delay_uart(): #After each string or command sent, a 5ms delay is needed
-    time.sleep(0.05)
+    sleep(0.05)
 
 def full():
     full = ("FULL" .encode("utf-8"))
     uart.write(full)
     
 
-send_serial("test")
-full()
+#send_serial("test")
+#full()
     
 
 

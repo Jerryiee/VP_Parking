@@ -6,14 +6,8 @@ import datetime
 from gpiozero import Button
 from time import sleep
 
-
 button1 = Button(2)
 button2 = Button(3)
-
-#pre definitions
-capacity = 50
-free = 0
-used = capacity - free
 
 #display one digit
 display = ("{}")
@@ -33,12 +27,12 @@ while True:
         diming(4)
         dim = False
     """decrease or increase parking slots
-    manualy #button1 decrease, button2 increase"""
+    manualy button1 decrease, button2 increase"""
     if button1.is_pressed: 
         print("Decrease")
-        used += 1
+        Decrease()
         sleep(0.5)
     elif button2.is_pressed:
         print("Increase")
-        used -= 1
+        Increase()
         sleep(0.5)

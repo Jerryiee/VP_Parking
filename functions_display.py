@@ -50,6 +50,24 @@ def full():
 
 #send_serial("test")
 #full()
+     
+#save to file and read previous value of free spaces
+def Increase():
     
+    with open('spaces.txt','r') as f:
+        free = int(f.read())
+        free += 1
 
+    with open('spaces.txt','w') as f2:
+        f2.truncate() # clear previous content
+        f2.write(f'{str(free)}')
 
+def Decrease():
+    
+    with open('spaces.txt','r') as f:
+        free = int(f.read())
+        free -= 1
+
+    with open('spaces.txt','w') as f2:
+        f2.truncate() # clear previous content
+        f2.write(f'{str(free)}')

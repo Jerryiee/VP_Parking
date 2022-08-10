@@ -46,6 +46,7 @@ def delay_uart(): #After each string or command sent, a 5ms delay is needed
 def full():
     full = ("FULL" .encode("utf-8"))
     uart.write(full)
+    delay_uart()
     
 
 #send_serial("test")

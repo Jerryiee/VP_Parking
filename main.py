@@ -13,9 +13,8 @@ button2 = Button(3)
 display = ("{}")
 full = ("FULL" .encode("utf-8"))
 
-
 #dim on time
-dim = False
+dim = False #flag
 now = datetime.datetime.now()
 
 while True:

@@ -22,6 +22,7 @@ query = 'from(bucket: "clevernet") \
 |> aggregateWindow(every: 5s, fn: mean, createEmpty: false) \
 |> fill(value: 0.0) \
 |> difference(keepFirst:false, nonNegative:true) \
+|> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value") \
 |> yield(name: "mean")' 
 
 

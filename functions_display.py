@@ -34,10 +34,8 @@ def diming(i): #0 stands for display off, 1 stands for dimmest, 4 stands for not
     delay_uart()
     
 def send_serial(i):
-    s = "{}"
-    send = uart.write(s.format(i) .encode("utf-8"))
-    recieve = uart.read(send)
-    print(recieve)
+    s = "  {}"
+    uart.write(s.format(i) .encode("utf-8"))
     delay_uart()
     
 def delay_uart(): #After each string or command sent, a 5ms delay is needed
@@ -47,28 +45,27 @@ def full():
     full = ("FULL" .encode("utf-8"))
     uart.write(full)
     delay_uart()
-    
+    blinking(1)
+    delay_uart()
 
-#send_serial("test")
-#full()
-     
 #save to file and read previous value of free spaces
+
 def Increase():
     
     with open('spaces.txt','r') as f:
-        free = int(f.read())
-        free += 1
+        free_spaces = int(f.read())
+        free_spaces += 1
 
     with open('spaces.txt','w') as f2:
         f2.truncate() # clear previous content
-        f2.write(f'{str(free)}')
+        f2.write(f'{str(free_spaces)}')
 
 def Decrease():
     
     with open('spaces.txt','r') as f:
-        free = int(f.read())
-        free -= 1
+        free_spaces = int(f.read())
+        free_spaces -= 1
 
     with open('spaces.txt','w') as f2:
         f2.truncate() # clear previous content
-        f2.write(f'{str(free)}')
+        f2.write(f'{str(free_spaces)}')

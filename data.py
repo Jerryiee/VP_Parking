@@ -1,5 +1,6 @@
 from influxdb_client import InfluxDBClient
 from time import sleep
+from influxdb_client.client.warnings import MissingPivotFunction
 
 
 influx_db_url = "http://158.193.238.118:8086"
@@ -19,14 +20,17 @@ query = 'from(bucket: "clevernet") \
 |>    or r["_field"] == "len0_speed0_cnt12" or r["_field"] == "len1_speed0_cnt12" or r["_field"] == "len2_speed0_cnt12") \
 |> filter(fn: (r) => r["deviceName"] == "dd-8112573d" or r["deviceName"] == "dd-8112578f")  // UNIZA.park.IN, UNIZA.park.OUT \
 |> aggregateWindow(every: 5s, fn: mean, createEmpty: false) \
+|> fill(value: 0.0) \
 |> difference(keepFirst:false, nonNegative:true) \
-|> yield(name: "mean")'
+|> yield(name: "mean")' 
 
-while True:
-    result = influx_db.query_api().query_stream(org=influx_db_org, query=query)
-    for record in result:
-        print(f'Is {record.get_time()}')
-    sleep(5) #test odozvy
+
+result = query_api.query_data_frame(org=influx_db_org, query=query)
+
+for record in result:
+    print(result)
+ 
+
 
 #df = DataFrame(resoverall.fetchall())
 #df.columns = resoverall.keys()

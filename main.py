@@ -59,6 +59,7 @@ while True:
         elif free_spaces > 0 and full_flag == True:
             full_flag = False
             blinking(0)
+            send_serial(free_spaces)
         
         elif free_spaces > 0 and free_spaces != spaces_displayed:
             send_serial(free_spaces)

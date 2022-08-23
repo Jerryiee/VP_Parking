@@ -1,6 +1,5 @@
 from influxdb_client import Point, InfluxDBClient
 import os
-from IPython.display import display
 import pandas as pd
 
 influx_db_url = "http://158.193.238.118:8086"

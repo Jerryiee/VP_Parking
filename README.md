@@ -7,6 +7,9 @@ https://github.com/ultralytics/yolov5
 
 
 Future plans: 
+
 Jetson nano
+
 Line for counting vehicles 
+
 Data analysis

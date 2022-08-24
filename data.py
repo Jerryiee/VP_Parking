@@ -1,6 +1,7 @@
 from influxdb_client import Point, InfluxDBClient
 import os
 import pandas as pd
+import numpy as np
 
 influx_db_url = "http://158.193.238.118:8086"
 influx_db_token = "48XCBqMXJeSqW8yRe857wrtqu-X0MGuyF3GQWJc0TfpvIJrnqAlcPY81XZcHJSIDdk9bWGfYmpc6uwOEvKTsng=="
@@ -13,7 +14,7 @@ query_api = influx_db.query_api()
 # Must contain PIVOT function!!!
 query2 = '''
 from(bucket: "clevernet")
-    |> range(start: -5d)
+    |> range(start: -8h)
     |> filter(fn: (r) => r._measurement == "traffic"
                     and (r.deviceName == "dd-8112573d" 
                         or r.deviceName == "dd-8112578f"
@@ -25,7 +26,6 @@ from(bucket: "clevernet")
                         )                        
                     )
     |> difference(keepFirst: false, nonNegative: true)
-    |> duplicate(column: "_stop", as: "_time")
     |> drop(columns: ["_start", "_stop", "_measurement"])    
     |> pivot(rowKey: ["_time", "deviceName"], columnKey: ["_field"], valueColumn: "_value")
     |> rename(columns: {_time: "Time",  
@@ -36,7 +36,20 @@ from(bucket: "clevernet")
         })
     |> yield(name: "after pivot")
 '''
+if not os.path.isdir("csv"): #create dic for save file
+  os.makedirs("csv")
 
-result = query_api.query_data_frame(org=influx_db_org, query=query2)
+result = query_api.query_data_frame(query=query2)
+result.head()
+in_veh = result[result['SensorName'] == 'dd-8112573d'].copy() #IN&out filter
+out_veh = result[result['SensorName'] == 'dd-8112578f'].copy()
 
-print(result)
+
+in_veh.loc['total'] = in_veh.select_dtypes(np.number).sum() #sum
+out_veh.loc['total'] = out_veh.select_dtypes(np.number).sum()
+
+print(in_veh)
+print(out_veh)
+
+in_veh.to_csv('csv/datain.csv', index=False)
+out_veh.to_csv('csv/dataout.csv', index=False)

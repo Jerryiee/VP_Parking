@@ -23,7 +23,7 @@ Usage - formats:
                                          yolov5s.tflite             # TensorFlow Lite
                                          yolov5s_edgetpu.tflite     # TensorFlow Edge TPU
 """
-
+import collections
 import argparse
 import os
 import platform
@@ -45,11 +45,13 @@ from utils.general import (LOGGER, Profile, check_file, check_img_size, check_im
                            increment_path, non_max_suppression, print_args, scale_coords, strip_optimizer, xyxy2xywh)
 from utils.plots import Annotator, colors, save_one_box
 from utils.torch_utils import select_device, smart_inference_mode
-
+Params = collections.namedtuple('Params', ['a','b','c']) #to store equation of a line
 cars = [2, 7]
-cars_out = 0
 cars_in = 0
-totalcars = 0
+cars_out = 0
+im_centroids = []
+last_centroids = None
+
 
 @smart_inference_mode()
 def run(
@@ -148,6 +150,7 @@ def run(
             gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
             imc = im0.copy() if save_crop else im0  # for save_crop
             annotator = Annotator(im0, line_width=line_thickness, example=str(names))
+            w, h = im0.shape[1], im0.shape[0]
             if len(det):
                 # Rescale boxes from img_size to im0 size
                 det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()
@@ -166,19 +169,54 @@ def run(
                             f.write(('%g ' * len(line)).rstrip() % line + '\n')
 
                     if save_img or save_crop or view_img:  # Add bbox to image
+                        global im_centroids
                         c = int(cls)  # integer class
                         label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
                         annotator.box_label(xyxy, label, color=colors(c, True))
+                        x1 = int(xyxy[0] + (int(xyxy[2]-xyxy[0])/2))
+                        y1 = int(xyxy[1] + (int(xyxy[3]-xyxy[1])/2))
+                        centroid = (x1 , y1)
+                        cv2.circle(im0, centroid, radius=5, color=(0,255,0), thickness=2)
+                        #print(centroid)
+                        im_centroids.append(centroid)
                     if save_crop:
                         save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
 
             # Stream results
+            global last_centroids, cars_in, cars_out
             im0 = annotator.result()
             if view_img:
+                start_point =(0, h-120)
+                end_point= (w,h-120)
+                #print(im_centroids)
+                if(last_centroids is not None):
+                    #print(last_centroids)
+                    for cntx, cnty in last_centroids:
+                        cv2.circle(im0, (cntx, cnty), radius=5, color=(255,0,255), thickness=1)
+                        #print(cntx, cnty)
+                    if(range(len(im_centroids)) == range(len(last_centroids))):
+                        for i in range(len(im_centroids)):
+                            line_params = calcParams(im_centroids[i], last_centroids[i])
+                            intercept_line_params = calcParams((start_point), (end_point))
+                            cv2.line(im0,im_centroids[i], last_centroids[i] ,(0,0,255),1)
+                            print(im_centroids[i])
+                            print(last_centroids[i])
+
+                            if(areLinesIntersecting(intercept_line_params,line_params ,im_centroids[i], last_centroids[i], im0)):
+                                cars_in += 1
+                    
+                cv2.putText(im0, str(cars_in), (50,50), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255,255,255), 1, cv2.LINE_AA)# show count
+                cv2.line(im0,(start_point),(end_point),(200,200,0),2) #intercepting line
                 if platform.system() == 'Linux' and p not in windows:
                     windows.append(p)
                     cv2.namedWindow(str(p), cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)  # allow window resize (Linux)
                     cv2.resizeWindow(str(p), im0.shape[1], im0.shape[0])
+                
+
+                last_centroids = im_centroids
+                im_centroids = []
+                #cv2.putText(im0, str(cars_in), (50,50), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255,255,255), 1, cv2.LINE_AA)# show count
+
                 cv2.imshow(str(p), im0)
                 cv2.waitKey(1)  # 1 millisecond
 
@@ -246,6 +284,41 @@ def parse_opt():
     opt.imgsz *= 2 if len(opt.imgsz) == 1 else 1  # expand
     print_args(vars(opt))
     return opt
+
+
+
+
+#inserting line
+
+
+def calcParams(point1, point2): #line's equation Params computation
+    if point2[1] - point1[1] == 0:
+        a = 0
+        b = -1.0
+    elif point2[0] - point1[0] == 0:
+        a = -1.0
+        b = 0
+    else:
+        a = (point2[1] - point1[1]) / (point2[0] - point1[0])
+        b = -1.0
+
+    c = (-a * point1[0]) - b * point1[1]
+    return Params(a,b,c)
+
+def areLinesIntersecting(params1, params2, point1, point2, im0):
+    det = params1.a * params2.b - params2.a * params1.b
+    if det == 0:
+        return False #lines are parallel
+    else:
+        x = (params2.b * -params1.c - params1.b * -params2.c)/det
+        y = (params1.a * -params2.c - params2.a * -params1.c)/det
+        if x <= max(point1[0],point2[0]) and x >= min(point1[0],point2[0]) and y <= max(point1[1],point2[1]) and y >= min(point1[1],point2[1]):
+        #print("intersecting in:", x,y)
+            cv2.circle(im0,(int(x),int(y)),4,(0,0,255), -1) #intersecting point
+            return True #lines are intersecting inside the line segment
+        else:
+            return False #lines are intersecting but outside of the line segment
+
 
 #run()
 '''

@@ -50,7 +50,7 @@ cars = [2, 7]
 cars_in = 0
 cars_out = 0
 im_centroids = []
-last_centroids = None
+last_centroids =()
 
 
 @smart_inference_mode()
@@ -189,23 +189,28 @@ def run(
                 start_point =(0, h-120)
                 end_point= (w,h-120)
                 #print(im_centroids)
-                if(last_centroids is not None):
+                if(len(last_centroids) != 0):
                     #print(last_centroids)
+                    print(last_centroids)
+                    print(im_centroids)
                     for cntx, cnty in last_centroids:
                         cv2.circle(im0, (cntx, cnty), radius=5, color=(255,0,255), thickness=1)
                         #print(cntx, cnty)
-                    if(range(len(im_centroids)) == range(len(last_centroids))):
-                        for i in range(len(im_centroids)):
-                            line_params = calcParams(im_centroids[i], last_centroids[i])
+                    for i in range(len(im_centroids)):
+                        nearest = min(last_centroids, key=lambda x: distanceCalculate(x, im_centroids[i]))
+                        print(im_centroids[i])
+                        print(nearest)
+                        dis = distanceCalculate(nearest, im_centroids[i])
+                        if(dis<30):
+                            line_params = calcParams(nearest, im_centroids[i])
                             intercept_line_params = calcParams((start_point), (end_point))
-                            cv2.line(im0,im_centroids[i], last_centroids[i] ,(0,0,255),1)
-                            print(im_centroids[i])
-                            print(last_centroids[i])
+                            cv2.line(im0, nearest, im_centroids[i] ,(0,0,255),1)
 
-                            if(areLinesIntersecting(intercept_line_params,line_params ,im_centroids[i], last_centroids[i], im0)):
+                            if(areLinesIntersecting(intercept_line_params,line_params,nearest, im_centroids[i], im0)):
                                 cars_in += 1
                     
                 cv2.putText(im0, str(cars_in), (50,50), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255,255,255), 1, cv2.LINE_AA)# show count
+                cv2.putText(im0, str(cars_out), (50,100), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255,255,0), 1, cv2.LINE_AA)# show count
                 cv2.line(im0,(start_point),(end_point),(200,200,0),2) #intercepting line
                 if platform.system() == 'Linux' and p not in windows:
                     windows.append(p)
@@ -319,6 +324,10 @@ def areLinesIntersecting(params1, params2, point1, point2, im0):
         else:
             return False #lines are intersecting but outside of the line segment
 
+def distanceCalculate(p1, p2):
+    """p1 and p2 in format (x1,y1) and (x2,y2) tuples"""
+    dis = ((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2) ** 0.5
+    return dis
 
 #run()
 '''

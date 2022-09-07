@@ -15,13 +15,10 @@ https://github.com/ultralytics/yolov5
 
 Jetson nano<br />
 Line for counting vehicles ✔️<br />
-Data analysis
+Data analysis <br />
 Identification
 
 
 
-
-
-https://user-images.githubusercontent.com/39840269/188903766-3bf15ff7-0a50-46c3-a175-84875e6c2a6f.mp4
-
+https://user-images.githubusercontent.com/39840269/188903893-9096fc75-efd7-4844-b93e-e8abec851ef7.mp4
 

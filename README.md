@@ -1,4 +1,4 @@
-##VP_Parking
+#VP_Parking
 
 #This project is combination of Data analysis from UNIZA.park.IN.temp,UNIZA.park.OUT sensors and computer vision network.
 
@@ -13,9 +13,9 @@ https://github.com/ultralytics/yolov5
 
 **Future plans:**
 
--Jetson nano
--Line for counting vehicles ✔️
--Data analysis
+Jetson nano<br />
+Line for counting vehicles ✔️<br />
+Data analysis
 
 
 

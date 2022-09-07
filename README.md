@@ -18,7 +18,9 @@ Line for counting vehicles ✔️<br />
 Data analysis
 Identification
 
-https://user-images.githubusercontent.com/39840269/188902618-030e11b1-62c5-4e74-a397-6045966f115e.mp4
+
+
+https://user-images.githubusercontent.com/39840269/188903184-23bc8a30-cfe9-4807-b19d-1d0b5515e6ed.mp4
 
 
 

@@ -46,12 +46,14 @@ from utils.general import (LOGGER, Profile, check_file, check_img_size, check_im
                            increment_path, non_max_suppression, print_args, scale_coords, strip_optimizer, xyxy2xywh)
 from utils.plots import Annotator, colors, save_one_box
 from utils.torch_utils import select_device, smart_inference_mode
+#our definitions for counting_vehicles
 Params = collections.namedtuple('Params', ['a','b','c']) #to store equation of a line
 cars = [2, 7]
 cars_in = 0
 cars_out = 0
 im_centroids = []
 detections = []
+data_count = []
 last_centroids =()
 tracker = EuclideanDistTracker()
 
@@ -181,28 +183,29 @@ def run(
                         centroid = (x1 , y1)
                         cv2.circle(im0, centroid, radius=5, color=(0,255,0), thickness=2) 
                         im_centroids.append(centroid)
-                        detections.append(centroid)
                     if save_crop:
                         save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
 
             # Stream results
-            global last_centroids, cars_in, cars_out
+            global last_centroids, cars_in, cars_out, data_count
             im0 = annotator.result()
             if view_img:
+                 #line points
                 start_point =(0, h-220)
                 end_point= (w,h-220)
                 (sx1, sy1) = start_point
                 (ex1, ey1) = end_point
-                boxes_ids = tracker.update(detections)
-                for box_id in boxes_ids:
-                    cx, cy ,id = box_id
-                    cv2.putText(im0, str(id),(cx,cy-15),  cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,255), 2)
+
+                detection = tracker.update(im_centroids)
 
                 if(len(last_centroids) != 0):
-                    for cntx, cnty in last_centroids:
+                    #draw centroid from last positions
+                    for cntx, cnty in last_centroids: 
                         cv2.circle(im0, (cntx, cnty), radius=5, color=(255,0,255), thickness=1)
-
+                    #find nearest last centroid to every current centorid 
                     for i in range(len(im_centroids)):
+                        (cx, cy ,id) = detection[i]
+                        cv2.putText(im0, str(id),(cx,cy-15),  cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,255), 2)
                         nearest = min(last_centroids, key=lambda x: distanceCalculate(x, im_centroids[i]))
                         dis = distanceCalculate(nearest, im_centroids[i])
                         if(dis<50):
@@ -214,12 +217,17 @@ def run(
                             line_params = calcParams(nearest, im_centroids[i])
                             intercept_line_params = calcParams((start_point), (end_point))
                             cv2.line(im0, nearest, im_centroids[i] ,(0,0,255),1)
-
+                            #chcek if lines are intersecting
                             if(areLinesIntersecting(intercept_line_params,line_params ,nearest, im_centroids[i], im0)):
-                                if(line_centroid < iy):
+                                #chcek if from what side cross the line and if is id on data
+                                if(line_centroid < iy and id not in data_count):
+                                    data_count.append(id)
+                                    print(id)
                                     cars_in += 1
-                                elif(line_last < ny):
+                                elif(line_last < ny and id not in data_count):
+                                    data_count.append(id)
                                     cars_out += 1
+                                    print(id)
                     
                 cv2.putText(im0, str(cars_in), (50,50), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0,0,255), 1, cv2.LINE_AA)# show count
                 cv2.putText(im0, str(cars_out), (50,100), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0,0,255), 1, cv2.LINE_AA)# show count
@@ -236,7 +244,7 @@ def run(
                 #cv2.putText(im0, str(cars_in), (50,50), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255,255,255), 1, cv2.LINE_AA)# show count
 
                 cv2.imshow(str(p), im0)
-                cv2.waitKey(0)  # 1 millisecond
+                cv2.waitKey(1)  # 1 millisecond
 
             # Save results (image with detections)
             if save_img:

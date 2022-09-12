@@ -16,7 +16,8 @@ https://github.com/ultralytics/yolov5
 Jetson nano<br />
 Line for counting vehicles ✔️<br />
 Data analysis <br />
-Identification ✔️
+Identification ✔️ <br />
+Draw lines
 
 
 ### Line for counting vehicles<br />

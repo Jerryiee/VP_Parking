@@ -23,13 +23,11 @@ Usage - formats:
                                          yolov5s.tflite             # TensorFlow Lite
                                          yolov5s_edgetpu.tflite     # TensorFlow Edge TPU
 """
-import collections
 import argparse
 import os
 import platform
 import sys
 from pathlib import Path
-from tracemalloc import start
 
 import torch
 import torch.backends.cudnn as cudnn
@@ -48,7 +46,6 @@ from utils.general import (LOGGER, Profile, check_file, check_img_size, check_im
 from utils.plots import Annotator, colors, save_one_box
 from utils.torch_utils import select_device, smart_inference_mode
 #our definitions for counting_vehicles
-Params = collections.namedtuple('Params', ['a','b','c']) #to store equation of a line
 cars = [2, 7]
 cars_in = 0
 cars_out = 0
@@ -201,6 +198,7 @@ def run(
 
                     (sx1, sy1) = start_point
                     (ex1, ey1) = end_point
+                    line = (start_point, end_point)
                     detection = tracker.update(im_centroids)
 
                     if(len(last_centroids) != 0):
@@ -220,20 +218,19 @@ def run(
                                 m = (ey1-sy1)/(ex1-sx1)
                                 line_last= m * (nx-sx1) + sy1
                                 line_centroid= m * (ix-sx1) + sy1
-                                line_params = calcParams(nearest, im_centroids[i])
-                                intercept_line_params = calcParams((start_point), (end_point))
+                                line_points = (nearest, im_centroids[i])
                                 cv2.line(im0, nearest, im_centroids[i] ,(0,0,255),1)
                                 #chcek if lines are intersecting
-                                if(areLinesIntersecting(intercept_line_params,line_params ,nearest, im_centroids[i], im0)):
+                                if(intersects(line, line_points)):
                                     #chcek if from what side cross the line and if is id on data
                                     if(line_centroid < iy and id not in data_count):
                                         data_count.append(id)
-                                        print(id)
+                                        #print(id)
                                         cars_in += 1
                                     elif(line_last < ny and id not in data_count):
                                         data_count.append(id)
                                         cars_out += 1
-                                        print(id)
+                                        #print(id)
                     
                     cv2.putText(im0, str(cars_in), (50,50), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0,0,255), 1, cv2.LINE_AA)# show count
                     cv2.putText(im0, str(cars_out), (50,100), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0,255,0), 1, cv2.LINE_AA)# show count
@@ -248,14 +245,14 @@ def run(
                 im_centroids = []
                 detections = []
                 #cv2.putText(im0, str(cars_in), (50,50), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255,255,255), 1, cv2.LINE_AA)# show count
-
-                cv2.imshow(str(p), im0)
-                cv2.setMouseCallback(str(p),drawLine)
-                k = cv2.waitKey(1) & 0xFF
-                if k == 27 or k == 32 or k == 13:
-                    cv2.destroyAllWindows()    # Finish drawing lines by pressing enter, space or escape
-                    break
-                cv2.waitKey(1)  # 1 millisecond
+                k = cv2.waitKey(1)
+                cv2.namedWindow("video")
+                #if k == 27 or k == 32 or k == 13:
+                    #break
+                cv2.imshow("video", im0)
+                cv2.setMouseCallback("video", drawLine)
+                
+                #cv2.waitKey(1)  # 1 millisecond
 
             # Save results (image with detections)
             if save_img:
@@ -323,39 +320,6 @@ def parse_opt():
     return opt
 
 
-
-
-#inserting line
-
-
-def calcParams(point1, point2): #line's equation Params computation
-    if point2[1] - point1[1] == 0:
-        a = 0
-        b = -1.0
-    elif point2[0] - point1[0] == 0:
-        a = -1.0
-        b = 0
-    else:
-        a = (point2[1] - point1[1]) / (point2[0] - point1[0])
-        b = -1.0
-
-    c = (-a * point1[0]) - b * point1[1]
-    return Params(a,b,c)
-
-def areLinesIntersecting(params1, params2, point1, point2, im0):
-    det = params1.a * params2.b - params2.a * params1.b
-    if det == 0:
-        return False #lines are parallel
-    else:
-        x = (params2.b * -params1.c - params1.b * -params2.c)/det
-        y = (params1.a * -params2.c - params2.a * -params1.c)/det
-        if x <= max(point1[0],point2[0]) and x >= min(point1[0],point2[0]) and y <= max(point1[1],point2[1]) and y >= min(point1[1],point2[1]):
-        #print("intersecting in:", x,y)
-            cv2.circle(im0,(int(x),int(y)),4,(0,0,255), -1) #intersecting point
-            return True #lines are intersecting inside the line segment
-        else:
-            return False #lines are intersecting but outside of the line segment
-
 def distanceCalculate(p1, p2):
     """p1 and p2 in format (x1,y1) and (x2,y2) tuples"""
     dis = ((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2) ** 0.5
@@ -374,6 +338,43 @@ def drawLine(event, x, y, flags, param):
             end_point = (x2, y2)
             #detection_lines.append([sx1, sy1, ex1, ey1])
             drawing = False
+
+def on_segment(p, q, r):
+    if r[0] <= max(p[0], q[0]) and r[0] >= min(p[0], q[0]) and r[1] <= max(p[1], q[1]) and r[1] >= min(p[1], q[1]):
+        return True
+    return False
+
+def orientation(p, q, r):
+    val = ((q[1] - p[1]) * (r[0] - q[0])) - ((q[0] - p[0]) * (r[1] - q[1]))
+    if val == 0 : return 0
+    return 1 if val > 0 else -1
+
+def intersects(seg1, seg2):
+#check if seg1 and seg2 intersect
+
+    p1, q1 = seg1
+    p2, q2 = seg2
+
+    o1 = orientation(p1, q1, p2)
+#find all orientations
+
+    o2 = orientation(p1, q1, q2)
+    o3 = orientation(p2, q2, p1)
+    o4 = orientation(p2, q2, q1)
+
+    if o1 != o2 and o3 != o4:
+#check general case
+
+        return True
+
+    if o1 == 0 and on_segment(p1, q1, p2) : return True
+#heck special cases
+
+    if o2 == 0 and on_segment(p1, q1, q2) : return True
+    if o3 == 0 and on_segment(p2, q2, p1) : return True
+    if o4 == 0 and on_segment(p2, q2, q1) : return True
+
+    return False
 
 #run()
 '''

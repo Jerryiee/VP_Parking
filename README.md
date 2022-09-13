@@ -18,7 +18,7 @@ Line for counting vehicles ✔️<br />
 Data analysis <br />
 Identification ✔️ <br />
 Draw lines ✔️ <br />
-Possibility count more lines at once 
+Possibility count more lines at once  <br />
 Entry camera
 
 

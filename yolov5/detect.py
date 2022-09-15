@@ -47,8 +47,8 @@ from utils.plots import Annotator, colors, save_one_box
 from utils.torch_utils import select_device, smart_inference_mode
 #our definitions for counting_vehicles
 cars = [2, 7]
-cars_in = 0
-cars_out = 0
+cars_in = [0]
+cars_out = [0]
 im_centroids = []
 detections = []
 detection_lines = []
@@ -277,16 +277,24 @@ def counting(im0):
     #line points
     #start_point =(120, h-120)
                 #end_point= (w-120,h-120)
+    detection = tracker.update(im_centroids)
 
     if(detection_lines != 0):
 
         for b in range(len(detection_lines)):
 
+            if len(cars_in)-1 == b:
+                cars_in.append(0)
+                print(cars_in)
+            if len(cars_out)-1 == b:
+                cars_out.append(0)
+                print(cars_out)
+
+
             sx1, sy1, ex1, ey1 = detection_lines[b]
             start_point = (sx1, sy1)
             end_point = (ex1, ey1)
             line = (start_point, end_point)
-            detection = tracker.update(im_centroids)
 
             if(len(last_centroids) != 0):
 
@@ -297,7 +305,6 @@ def counting(im0):
                 #find nearest last centroid to every current centorid 
                 for i in range(len(im_centroids)):
                     (cx, cy ,id) = detection[i]
-                    cv2.putText(im0, str(id),(cx,cy-15),  cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,255), 2)
                     nearest = min(last_centroids, key=lambda x: distanceCalculate(x, im_centroids[i]))
                     dis = distanceCalculate(nearest, im_centroids[i])
 
@@ -317,15 +324,20 @@ def counting(im0):
                             if(line_centroid < iy and id not in data_count):
                                 data_count.append(id)
                                 #print(id)
-                                cars_in += 1
+                                cars_in[b] += 1
                             elif(line_last < ny and id not in data_count):
                                 data_count.append(id)
-                                cars_out += 1
+                                cars_out[b] += 1
                                 #print(id)
                         
-            cv2.putText(im0, str(cars_in), (50,50), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0,0,255), 1, cv2.LINE_AA)# show count
-            cv2.putText(im0, str(cars_out), (50,100), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0,255,0), 1, cv2.LINE_AA)# show count
+            cv2.putText(im0, str(cars_in[b]), (sx1, sy1-15), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0,0,255), 1, cv2.LINE_AA)# show count
+            cv2.putText(im0, str(cars_out[b]), (sx1-25, sy1-15), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0,255,0), 1, cv2.LINE_AA)# show count
             cv2.line(im0,(start_point),(end_point),(0,0,255),2) #intercepting line
+    #show all ids on frame
+    for i in range(len(im_centroids)):
+        (cx, cy ,id) = detection[i]
+        cv2.putText(im0, str(id),(cx,cy-15),  cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,255), 2)
+
     last_centroids = im_centroids
     im_centroids = []
     detections = []

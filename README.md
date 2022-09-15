@@ -32,3 +32,7 @@ https://user-images.githubusercontent.com/39840269/188903893-9096fc75-efd7-4844-
 ### Draw lines <br />
 https://user-images.githubusercontent.com/39840269/189973714-8ec64ca3-15a4-4162-8c2a-124359a99444.mp4
 
+### Possibility count more lines at once  <br />
+https://user-images.githubusercontent.com/39840269/190453627-fb09665a-1f2e-4b45-880e-5106aa487944.mp4
+
+

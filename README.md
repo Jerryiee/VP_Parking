@@ -19,7 +19,8 @@ Data analysis <br />
 Identification ✔️ <br />
 Draw lines ✔️ <br />
 Possibility count more lines at once ✔️ <br />
-Entry camera
+Entry camera <br />
+Deepstream
 
 
 ### Line for counting vehicles<br />

@@ -13,7 +13,7 @@ https://github.com/ultralytics/yolov5
 
 **Future plans:**
 
-Jetson nano<br />
+Jetson nano ✔️ <br />
 Line for counting vehicles ✔️<br />
 Data analysis <br />
 Identification ✔️ <br />
@@ -36,6 +36,6 @@ https://user-images.githubusercontent.com/39840269/189973714-8ec64ca3-15a4-4162-
 ### Possibility count more lines at once  <br />
 https://user-images.githubusercontent.com/39840269/190453627-fb09665a-1f2e-4b45-880e-5106aa487944.mp4
 
-### Jetson Nano work in progress...  <br />
+### Deepstream work in progress...  <br />
 
 

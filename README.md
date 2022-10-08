@@ -36,5 +36,6 @@ https://user-images.githubusercontent.com/39840269/189973714-8ec64ca3-15a4-4162-
 https://user-images.githubusercontent.com/39840269/190453627-fb09665a-1f2e-4b45-880e-5106aa487944.mp4
 
 ### Jetson Nano work in progress  <br />
-![1665217775083](https://user-images.githubusercontent.com/39840269/194699859-e13321c4-7d83-4830-8cd3-1e94f7fc413c.jpg
+
+![1665217775083](https://user-images.githubusercontent.com/39840269/194699878-92dde379-091f-4465-967b-e232dcfdbee6.jpg)
 

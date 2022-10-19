@@ -20,7 +20,7 @@ Identification ✔️ <br />
 Draw lines ✔️ <br />
 Possibility count more lines at once ✔️ <br />
 Entry camera ✔️ <br /> 
-Two reference lines <br />
+Two reference lines ✔️<br />
 Deepstream
 
 

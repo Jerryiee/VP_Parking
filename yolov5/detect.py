@@ -49,10 +49,12 @@ from utils.torch_utils import select_device, smart_inference_mode
 cars = [2, 7]
 cars_in = [0]
 cars_out = [0]
+cars_total = []
 im_centroids = []
 detections = []
 detection_lines = []
-data_count = []
+data_in = []
+data_out = []
 last_centroids =()
 tracker = EuclideanDistTracker()
 start_point = None
@@ -192,7 +194,90 @@ def run(
             im0 = annotator.result()
             if view_img:
                 
-                counting(im0) #counting function
+                global last_centroids, cars_in, cars_out, data_in, data_out, start_point, end_point, detection_lines, detections
+                #line points
+                #start_point =(120, h-120)
+                #end_point= (w-120,h-120)
+                
+                detection = tracker.update(im_centroids)
+
+                if(detection_lines != 0):
+
+                    for b in range(len(detection_lines)):
+
+                        if len(cars_in)-1 == b:
+                            cars_in.append(0)
+                            #print(cars_in)
+                        if len(cars_out)-1 == b:
+                            cars_out.append(0)
+                            #print(cars_out)
+
+
+                        sx1, sy1, ex1, ey1 = detection_lines[b]
+
+                        start_point = (sx1, sy1)
+                        start_point_ref = (sx1, sy1+25)
+                        end_point = (ex1, ey1)
+                        end_point_ref = (ex1, ey1+25)
+
+                        line_first = (start_point, end_point)
+                        line_second = (start_point_ref, end_point_ref)
+
+                        if(len(last_centroids) != 0):
+
+                        #draw centroid from last positions
+                        #for cntx, cnty in last_centroids: 
+                        #cv2.circle(im0, (cntx, cnty), radius=5, color=(255,0,255), thickness=-1)
+
+                            #find nearest last centroid to every current centorid 
+                            for i in range(len(im_centroids)):
+                                (cx, cy ,id) = detection[i]
+                                nearest = min(last_centroids, key=lambda x: distanceCalculate(x, im_centroids[i]))
+                                dis = distanceCalculate(nearest, im_centroids[i])
+
+                                #cv2.circle(im0, nearest, radius=3, color=(255,0,255), thickness=-1) #draw centroid from last positions, only nearest
+
+                                if(dis<100):
+                                    (nx, ny) = nearest
+                                    (ix, iy) = im_centroids[i]
+                                    m = (ey1-sy1)/(ex1-sx1)
+                                    line_last= m * (nx-sx1) + sy1
+                                    line_centroid= m * (ix-sx1) + sy1
+                                    line_points = (nearest, im_centroids[i])
+                                    #cv2.line(im0, nearest, im_centroids[i] ,(0,0,255),1) line betwen centroid and last near centroid
+                                    #chcek if lines are intersecting
+                                    if(intersects(line_first, line_points)):
+                                        #chcek if from what side cross the line and if is id on data
+                                        if(line_centroid < iy and id not in data_in):
+                                            data_in.append(id)
+                                            #print(id)
+                                        elif(line_last < ny and id in data_out):
+                                            cars_out[b] += 1
+                                            data_out.remove(id)
+                                            #print(id)
+                                    if(intersects(line_second, line_points)):
+                                        #chcek if from what side cross the line and if is id on data
+                                        if(line_centroid < iy and id in data_in):
+                                            cars_in[b] += 1
+                                            data_in.remove(id)
+                                            #print(id)
+                                        elif(line_last < ny and id not in data_out):
+                                            data_out.append(id)
+                                            #print(id)
+                        
+                        cv2.putText(im0, str(cars_in[b]), (sx1, sy1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,255), 1, cv2.LINE_AA)# show count
+                        cv2.putText(im0, str(cars_out[b]), (sx1-25, sy1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0), 1, cv2.LINE_AA)# show count
+                        cv2.line(im0,(start_point),(end_point),(0,0,255),1) #intercepting line
+                        cv2.line(im0,(start_point_ref),(end_point_ref),(0,0,255),1) #intercepting line
+                #show all ids on frame
+                for i in range(len(im_centroids)):
+                    (cx, cy ,id) = detection[i]
+                    cv2.putText(im0, str(id),(cx,cy-15),  cv2.FONT_HERSHEY_SIMPLEX, 0.7, color=colors(c, True), thickness=1)
+
+                last_centroids = im_centroids
+                im_centroids = []
+                detections = []
+
 
                 if platform.system() == 'Linux' and p not in windows:
                     windows.append(p)
@@ -272,76 +357,6 @@ def parse_opt():
     print_args(vars(opt))
     return opt
 
-def counting(im0):
-    global last_centroids, cars_in, cars_out, data_count, start_point, end_point, detection_lines, im_centroids, detections
-    #line points
-    #start_point =(120, h-120)
-                #end_point= (w-120,h-120)
-    detection = tracker.update(im_centroids)
-
-    if(detection_lines != 0):
-
-        for b in range(len(detection_lines)):
-
-            if len(cars_in)-1 == b:
-                cars_in.append(0)
-                print(cars_in)
-            if len(cars_out)-1 == b:
-                cars_out.append(0)
-                print(cars_out)
-
-
-            sx1, sy1, ex1, ey1 = detection_lines[b]
-            start_point = (sx1, sy1)
-            end_point = (ex1, ey1)
-            line = (start_point, end_point)
-
-            if(len(last_centroids) != 0):
-
-            #draw centroid from last positions
-            #for cntx, cnty in last_centroids: 
-            #cv2.circle(im0, (cntx, cnty), radius=5, color=(255,0,255), thickness=-1)
-
-                #find nearest last centroid to every current centorid 
-                for i in range(len(im_centroids)):
-                    (cx, cy ,id) = detection[i]
-                    nearest = min(last_centroids, key=lambda x: distanceCalculate(x, im_centroids[i]))
-                    dis = distanceCalculate(nearest, im_centroids[i])
-
-                                #cv2.circle(im0, nearest, radius=3, color=(255,0,255), thickness=-1) #draw centroid from last positions, only nearest
-
-                    if(dis<40):
-                        (nx, ny) = nearest
-                        (ix, iy) = im_centroids[i]
-                        m = (ey1-sy1)/(ex1-sx1)
-                        line_last= m * (nx-sx1) + sy1
-                        line_centroid= m * (ix-sx1) + sy1
-                        line_points = (nearest, im_centroids[i])
-                        #cv2.line(im0, nearest, im_centroids[i] ,(0,0,255),1) line betwen centroid and last near centroid
-                        #chcek if lines are intersecting
-                        if(intersects(line, line_points)):
-                            #chcek if from what side cross the line and if is id on data
-                            if(line_centroid < iy and id not in data_count):
-                                data_count.append(id)
-                                #print(id)
-                                cars_in[b] += 1
-                            elif(line_last < ny and id not in data_count):
-                                data_count.append(id)
-                                cars_out[b] += 1
-                                #print(id)
-                        
-            cv2.putText(im0, str(cars_in[b]), (sx1, sy1-15), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0,0,255), 1, cv2.LINE_AA)# show count
-            cv2.putText(im0, str(cars_out[b]), (sx1-25, sy1-15), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0,255,0), 1, cv2.LINE_AA)# show count
-            cv2.line(im0,(start_point),(end_point),(0,0,255),2) #intercepting line
-    #show all ids on frame
-    for i in range(len(im_centroids)):
-        (cx, cy ,id) = detection[i]
-        cv2.putText(im0, str(id),(cx,cy-15),  cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,255), 2)
-
-    last_centroids = im_centroids
-    im_centroids = []
-    detections = []
-
 
 def distanceCalculate(p1, p2):
     """p1 and p2 in format (x1,y1) and (x2,y2) tuples"""
@@ -398,7 +413,7 @@ def intersects(seg1, seg2):
     return False
 
 #run()
-'''
+
 def main(opt):
     check_requirements(exclude=('tensorboard', 'thop'))
     run(**vars(opt))
@@ -407,4 +422,3 @@ def main(opt):
 if __name__ == "__main__":
     opt = parse_opt()
     main(opt)
-'''

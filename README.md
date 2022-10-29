@@ -33,6 +33,8 @@ sudo ./change-rootfs-storage.sh [for example /dev/mmcblk1p1]                    
 5. YOLOv5 install <br />
 [instructions](https://wiki.seeedstudio.com/YOLOv5-Object-Detection-Jetson/) step 1 - 8 <br />
 
+if something doesnt work, is good to check [tutorial](https://github.com/newbiehyz/hand_jetsonnano)
+
 ### TensorRT<br />
 ```python3 export.py --weights yolov5s.pt --include engine --imgsz 640 640 --device 0```
 

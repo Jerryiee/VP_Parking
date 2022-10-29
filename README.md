@@ -23,11 +23,12 @@ Entry camera ✔️ <br />
 Two reference lines ✔️<br />
 Deepstream
 
-<Installation Jetson nano>
+###Installation Jetson nano <br />
+<details>
 
 First of all install Jetpack os via sdk manager, instructions here [sdk](https://www.waveshare.com/wiki/JETSON-NANO-DEV-KIT)
 <Installation Jetson nano>
-### Line for counting vehicles<br />
+<details>
 https://user-images.githubusercontent.com/39840269/188903893-9096fc75-efd7-4844-b93e-e8abec851ef7.mp4
 
 ### Identification<br />

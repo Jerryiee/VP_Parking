@@ -21,16 +21,17 @@ Draw lines ✔️ <br />
 Possibility count more lines at once ✔️ <br />
 Entry camera ✔️ <br /> 
 Two reference lines ✔️<br />
-Deepstream
+TensorRT
 
 ### Installation Jetson nano <br />
 <here>
+  </br>
 
-First of all install Jetpack os via sdk manager, instructions here [sdk](https://www.waveshare.com/wiki/JETSON-NANO-DEV-KIT)
+  First of all install Jetpack os via sdk manager, instructions here [sdk](https://www.waveshare.com/wiki/JETSON-NANO-DEV-KIT)
   
 </here>
 
-### Counting lines </br>
+### Counting lines <br />
 https://user-images.githubusercontent.com/39840269/188903893-9096fc75-efd7-4844-b93e-e8abec851ef7.mp4
 
 ### Identification<br />
@@ -43,7 +44,6 @@ https://user-images.githubusercontent.com/39840269/189973714-8ec64ca3-15a4-4162-
 ### Possibility count more lines at once  <br />
 https://user-images.githubusercontent.com/39840269/190453627-fb09665a-1f2e-4b45-880e-5106aa487944.mp4
 
-### Deepstream work in progress...  <br />
 
 ### Two reference lines  <br />
 

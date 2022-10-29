@@ -33,7 +33,9 @@ TensorRT
   sudo ./change-rootfs-storage.sh [for example /dev/mmcblk1p1]
   ```
   reboot and everithing is ready
-  
+4. YOLOv5 install
+  [instructions](https://wiki.seeedstudio.com/YOLOv5-Object-Detection-Jetson/) step 1 - 8
+5. Cuda install
 
 
 ### Counting lines <br />

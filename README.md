@@ -25,7 +25,16 @@ TensorRT
 
 ### Installation Jetson nano <br />
 
-First of all install Jetpack os via sdk manager, instructions here [sdk](https://www.waveshare.com/wiki/JETSON-NANO-DEV-KIT)
+1. First of all install Jetpack os via sdk manager, instructions here [sdk](https://www.waveshare.com/wiki/JETSON-NANO-DEV-KIT) <br />
+2. Enable SD card for J101 carrier board. Be aware, use this guide only for enable sd card, we falsh system to sd card in next step [enable sd card](https://wiki.seeedstudio.com/J101_Enable_SD_Card/)
+3. Boot from sd card - 
+  download [change_rootfs_storage.zip](https://github.com/Jerryiee/VP_Parking/files/9893646/change_rootfs_storage.zip)
+  ```bash
+  sudo ./change-rootfs-storage.sh [for example /dev/mmcblk1p1]
+  ```
+  reboot and everithing is ready
+  
+
 
 ### Counting lines <br />
 https://user-images.githubusercontent.com/39840269/188903893-9096fc75-efd7-4844-b93e-e8abec851ef7.mp4

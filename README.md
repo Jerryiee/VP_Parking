@@ -24,8 +24,9 @@ Two reference lines ✔️<br />
 Deepstream
 
 ### Installation Jetson nano <br />
-<here>
 
+<here>
+ </br>
 First of all install Jetpack os via sdk manager, instructions here [sdk](https://www.waveshare.com/wiki/JETSON-NANO-DEV-KIT)
 <Installation Jetson nano>
   

@@ -28,7 +28,7 @@ TensorRT
 1. First of all install Jetpack os via sdk manager, instructions here [sdk](https://www.waveshare.com/wiki/JETSON-NANO-DEV-KIT) - requieres second computer with ubuntu <br />
 2. Enable SD card for J101 carrier board. Be aware, use this guide only for enable sd card, we falsh system to sd card in next step [enable sd card](https://wiki.seeedstudio.com/J101_Enable_SD_Card/) <br />
 3. Boot from sd card - download [change_rootfs_storage.zip](https://github.com/Jerryiee/VP_Parking/files/9893646/change_rootfs_storage.zip)<br/>                       ```
-sudo ./change-rootfs-storage.sh [for example /dev/mmcblk1p1]                                                                                                    ```<br/>reboot and everithing is ready <br />
+sudo ./change-rootfs-storage.sh [for example /dev/mmcblk1p1]                                                                                                    ```<br/>reboot and everything is ready <br />
 4. Install SDK componets - use sdk manager again <br />
 5. YOLOv5 install <br />
 [instructions](https://wiki.seeedstudio.com/YOLOv5-Object-Detection-Jetson/) step 1 - 8 <br />

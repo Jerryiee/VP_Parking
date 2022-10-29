@@ -24,11 +24,9 @@ Two reference lines ✔️<br />
 TensorRT
 
 ### Installation Jetson nano <br />
-<here>
-  </br>
 
+<here>
   First of all install Jetpack os via sdk manager, instructions here [sdk](https://www.waveshare.com/wiki/JETSON-NANO-DEV-KIT)
-  
 </here>
 
 ### Counting lines <br />

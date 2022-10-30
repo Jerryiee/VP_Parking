@@ -45,11 +45,10 @@ def smart_inference_mode(torch_1_9=check_version(torch.__version__, '1.9.0')):
 def smartCrossEntropyLoss(label_smoothing=0.0):
     # Returns nn.CrossEntropyLoss with label smoothing enabled for torch>=1.10.0
     if check_version(torch.__version__, '1.10.0'):
-        return nn.CrossEntropyLoss(label_smoothing=label_smoothing)  # loss function
-    else:
-        if label_smoothing > 0:
-            LOGGER.warning(f'WARNING: label smoothing {label_smoothing} requires torch>=1.10.0')
-        return nn.CrossEntropyLoss()  # loss function
+        return nn.CrossEntropyLoss(label_smoothing=label_smoothing)
+    if label_smoothing > 0:
+        LOGGER.warning(f'WARNING ⚠️ label smoothing {label_smoothing} requires torch>=1.10.0')
+    return nn.CrossEntropyLoss()
 
 
 def smart_DDP(model):
@@ -118,7 +117,7 @@ def select_device(device='', batch_size=0, newline=True):
         assert torch.cuda.is_available() and torch.cuda.device_count() >= len(device.replace(',', '')), \
             f"Invalid CUDA '--device {device}' requested, use '--device cpu' or pass valid CUDA device(s)"
 
-    if not (cpu or mps) and torch.cuda.is_available():  # prefer GPU if available
+    if not cpu and not mps and torch.cuda.is_available():  # prefer GPU if available
         devices = device.split(',') if device else '0'  # range(torch.cuda.device_count())  # i.e. 0,1,6,7
         n = len(devices)  # device count
         if n > 1 and batch_size > 0:  # check batch_size is divisible by device_count
@@ -252,6 +251,7 @@ def fuse_conv_and_bn(conv, bn):
                           kernel_size=conv.kernel_size,
                           stride=conv.stride,
                           padding=conv.padding,
+                          dilation=conv.dilation,
                           groups=conv.groups,
                           bias=True).requires_grad_(False).to(conv.weight.device)
 
@@ -319,12 +319,13 @@ def smart_optimizer(model, name='Adam', lr=0.001, momentum=0.9, decay=1e-5):
     g = [], [], []  # optimizer parameter groups
     bn = tuple(v for k, v in nn.__dict__.items() if 'Norm' in k)  # normalization layers, i.e. BatchNorm2d()
     for v in model.modules():
-        if hasattr(v, 'bias') and isinstance(v.bias, nn.Parameter):  # bias (no decay)
-            g[2].append(v.bias)
-        if isinstance(v, bn):  # weight (no decay)
-            g[1].append(v.weight)
-        elif hasattr(v, 'weight') and isinstance(v.weight, nn.Parameter):  # weight (with decay)
-            g[0].append(v.weight)
+        for p_name, p in v.named_parameters(recurse=0):
+            if p_name == 'bias':  # bias (no decay)
+                g[2].append(p)
+            elif p_name == 'weight' and isinstance(v, bn):  # weight (no decay)
+                g[1].append(p)
+            else:
+                g[0].append(p)  # weight (with decay)
 
     if name == 'Adam':
         optimizer = torch.optim.Adam(g[2], lr=lr, betas=(momentum, 0.999))  # adjust beta1 to momentum
@@ -413,7 +414,6 @@ class ModelEMA:
         for p in self.ema.parameters():
             p.requires_grad_(False)
 
-    @smart_inference_mode()
     def update(self, model):
         # Update EMA parameters
         self.updates += 1
@@ -423,8 +423,8 @@ class ModelEMA:
         for k, v in self.ema.state_dict().items():
             if v.dtype.is_floating_point:  # true for FP16 and FP32
                 v *= d
-                v += (1 - d) * msd[k]
-        assert v.dtype == msd[k].dtype == torch.float32, f'EMA {v.dtype} and model {msd[k]} must be updated in FP32'
+                v += (1 - d) * msd[k].detach()
+        # assert v.dtype == msd[k].dtype == torch.float32, f'{k}: EMA {v.dtype} and model {msd[k].dtype} must be FP32'
 
     def update_attr(self, model, include=(), exclude=('process_group', 'reducer')):
         # Update EMA attributes

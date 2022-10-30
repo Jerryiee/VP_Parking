@@ -35,7 +35,7 @@ sudo ./change-rootfs-storage.sh [for example /dev/mmcblk1p1]                    
 
 if something doesnt work, is good to check [tutorial](https://github.com/newbiehyz/hand_jetsonnano)
 
-# Optional - [swap memory](https://github.com/JetsonHacksNano/installSwapfile) for better Jetson Nano performance, because of lack RAM
+#### Optional - [swap memory](https://github.com/JetsonHacksNano/installSwapfile) for better Jetson Nano performance, because of lack RAM
 
 ### TensorRT<br />
 ```python3 export.py --weights yolov5s.pt --include engine --imgsz 640 640 --device 0```

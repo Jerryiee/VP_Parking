@@ -46,4 +46,3 @@ class EuclideanDistTracker:
         # Update dictionary with IDs not used removed
         self.center_points = new_center_points.copy()
         return objects_bbs_ids
-

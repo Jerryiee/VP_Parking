@@ -13,12 +13,54 @@ https://github.com/ultralytics/yolov5
 
 **Future plans:**
 
-Jetson nano<br />
+Jetson nano ✔️ <br />
 Line for counting vehicles ✔️<br />
 Data analysis <br />
-Identification
+Identification ✔️ <br />
+Draw lines ✔️ <br />
+Possibility count more lines at once ✔️ <br />
+Entry camera ✔️ <br /> 
+Two reference lines ✔️<br />
+TensorRT
+
+### Installation Jetson nano <br />
+
+1. First of all install Jetpack os via sdk manager, instructions here [sdk](https://www.waveshare.com/wiki/JETSON-NANO-DEV-KIT) - requieres second computer with ubuntu <br />
+2. Enable SD card for J101 carrier board. Be aware, use this guide only for enable sd card, we falsh system to sd card in next step [enable sd card](https://wiki.seeedstudio.com/J101_Enable_SD_Card/) <br />
+3. Boot from sd card - download [change_rootfs_storage.zip](https://github.com/Jerryiee/VP_Parking/files/9893646/change_rootfs_storage.zip)<br/>                       ```
+sudo ./change-rootfs-storage.sh [for example /dev/mmcblk1p1]                                                                                                    ```<br/>reboot and everything is ready <br />
+4. Install SDK componets - use sdk manager again <br />
+5. YOLOv5 install <br />
+[instructions](https://wiki.seeedstudio.com/YOLOv5-Object-Detection-Jetson/) step 1 - 8 <br />
+
+if something doesnt work, is good to check [tutorial](https://github.com/newbiehyz/hand_jetsonnano)
+
+#### Optional - [swap memory](https://github.com/JetsonHacksNano/installSwapfile) for better Jetson Nano performance, because of lack RAM
+
+#### Overclock Jetson nano with these two commands (Its nessesary to use fan because of overheating) <br />
+```
+sudo jetson_clocks
+sudo nvpmodel -m 0
+```
+
+### TensorRT<br />
+```python3 export.py --weights yolov5s.pt --include engine --imgsz 640 640 --device 0```
 
 
-
+### Counting lines <br />
 https://user-images.githubusercontent.com/39840269/188903893-9096fc75-efd7-4844-b93e-e8abec851ef7.mp4
+
+### Identification<br />
+![Screenshot 2022-09-08 193235](https://user-images.githubusercontent.com/39840269/189187889-78906253-27f8-431d-b966-14bf213a78c4.png)
+![image](https://user-images.githubusercontent.com/39840269/189189265-78040d38-c9c9-48f2-bdd0-8f60a3766861.png)
+
+### Draw lines <br />
+https://user-images.githubusercontent.com/39840269/189973714-8ec64ca3-15a4-4162-8c2a-124359a99444.mp4
+
+### Possibility count more lines at once  <br />
+https://user-images.githubusercontent.com/39840269/190453627-fb09665a-1f2e-4b45-880e-5106aa487944.mp4
+
+
+### Two reference lines  <br />
+
 

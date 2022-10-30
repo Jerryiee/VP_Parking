@@ -37,7 +37,7 @@ if something doesnt work, is good to check [tutorial](https://github.com/newbieh
 
 #### Optional - [swap memory](https://github.com/JetsonHacksNano/installSwapfile) for better Jetson Nano performance, because of lack RAM
 
-#### Overclock Jetson nano with these two commands (Its nessesary use fan because of overheating) <br />
+#### Overclock Jetson nano with these two commands (Its nessesary to use fan because of overheating) <br />
 ```
 sudo jetson_clocks
 sudo nvpmodel -m 0

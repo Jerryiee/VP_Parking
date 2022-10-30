@@ -37,6 +37,12 @@ if something doesnt work, is good to check [tutorial](https://github.com/newbieh
 
 #### Optional - [swap memory](https://github.com/JetsonHacksNano/installSwapfile) for better Jetson Nano performance, because of lack RAM
 
+#### Overclock Jetson nano with these two commands (Its nessesary use fan because of overheating) <br />
+```
+sudo jetson_clocks
+sudo nvpmodel -m 0
+```
+
 ### TensorRT<br />
 ```python3 export.py --weights yolov5s.pt --include engine --imgsz 640 640 --device 0```
 

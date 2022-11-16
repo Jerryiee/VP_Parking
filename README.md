@@ -20,7 +20,8 @@ Identification ✔️ <br />
 Draw lines ✔️ <br />
 Entry camera ✔️ <br /> 
 Two reference lines ✔️<br />
-TensorRT
+TensorRT ✔️<br />
+KIOSK
 
 ### Installation Jetson nano <br />
 

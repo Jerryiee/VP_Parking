@@ -47,7 +47,7 @@ from utils.plots import Annotator, colors, save_one_box
 from utils.torch_utils import select_device, smart_inference_mode
 from utils.tracker import EuclideanDistTracker
 #our definitions for counting_vehicles
-cars = [2, 7]
+cars = [2,7]
 cars_in = 0
 cars_out = 0
 cars_total = 0
@@ -60,6 +60,8 @@ data_out = []
 last_centroids =()
 tracker = EuclideanDistTracker()
 drawing= False
+drawing_ref= False
+free_spaces = 50
 
 @smart_inference_mode()
 def run(
@@ -196,6 +198,9 @@ def run(
             if view_img:
                 global last_centroids, cars_in, cars_out, data_in, data_out, start_point, end_point, detection_lines, detection_ref_lines, detections
                 
+                if(len(last_centroids) == 0):
+                    tracker.id_count = 0
+                
                 detection = tracker.update(im_centroids)
 
                 if(detection_lines is not None and detection_ref_lines is not None):
@@ -241,6 +246,17 @@ def run(
                                     elif(line_centroid > iy and id in data_out):
                                         cars_out += 1
                                         data_out.remove(id)
+                                        with open('spaces.txt','r') as f:
+                                            free_spaces = int(f.read())
+                                            free_spaces += 1
+                                            used_spaces = 25 - free_spaces
+
+                                        with open('spaces.txt','w') as f2:
+                                            f2.truncate() # clear previous content
+                                            f2.write(f'{str(free_spaces)}')
+                                        with open('usedspaces.txt','w') as f2:
+                                            f2.truncate() # clear previous content
+                                            f2.write(f'{str(used_spaces)}')
                                         #print(id)
                                 if(intersects(line_second, line_points)):
                                     #chcek if from what side cross the line and if is id on data
@@ -250,6 +266,18 @@ def run(
                                     elif(line_centroid_ref < iy and id in data_in):
                                         cars_in += 1
                                         data_in.remove(id)
+                                        with open('spaces.txt','r') as f:
+                                            free_spaces = int(f.read())
+                                            free_spaces -= 1
+                                            used_spaces = 25 - free_spaces
+
+                                        with open('spaces.txt','w') as f2:
+                                            f2.truncate() # clear previous content
+                                            f2.write(f'{str(free_spaces)}')
+                                        with open('usedspaces.txt','w') as f2:
+                                            f2.truncate() # clear previous content
+                                            f2.write(f'{str(used_spaces)}')
+
 
 
                         
@@ -350,7 +378,7 @@ def distanceCalculate(p1, p2):
 
 def drawLine(event, x, y, flags, param):
     # Mouse event handlers for drawing lines
-    global x1, y1, drawing, detection_lines, detection_ref_lines
+    global x1, y1, drawing, drawing_ref, detection_lines, detection_ref_lines
     if event == cv2.EVENT_LBUTTONDOWN:
         if drawing == False:  # Start drawing a line
             x1, y1 = x, y
@@ -359,14 +387,18 @@ def drawLine(event, x, y, flags, param):
             x2, y2 = x, y
             detection_lines = [x1, y1, x2, y2]
             drawing = False
+            
+            print(detection_lines)
+
     if event == cv2.EVENT_RBUTTONDOWN:
-        if drawing == False:  # Start drawing a line
+        if drawing_ref == False:  # Start drawing a line
             x1, y1 = x, y
-            drawing = True
+            drawing_ref = True
         else:  # Stop drawing a line
             x2, y2 = x, y
             detection_ref_lines = [x1, y1, x2, y2]
-            drawing = False
+            drawing_ref = False
+            print(detection_ref_lines)
 
 def on_segment(p, q, r):
     if r[0] <= max(p[0], q[0]) and r[0] >= min(p[0], q[0]) and r[1] <= max(p[1], q[1]) and r[1] >= min(p[1], q[1]):
@@ -405,7 +437,7 @@ def intersects(seg1, seg2):
 
     return False
 
-run(source="0", weights="yolov5s.pt", conf_thres=0.25, imgsz=(640, 640), classes= cars, view_img=True, line_thickness=1, nosave=True, device = 0) 
+run(source="0", weights="yolov5n6.pt", conf_thres=0.25, imgsz=(640, 640), classes= cars, view_img=True, line_thickness=1, nosave=True, device = 0) 
 def main(opt):
     check_requirements(exclude=('tensorboard', 'thop'))
     run(**vars(opt))

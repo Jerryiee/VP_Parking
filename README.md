@@ -64,8 +64,3 @@ https://user-images.githubusercontent.com/39840269/198974789-df596829-4cc8-4084-
 
 ### Web aplication  <br />
 
-
-
-https://user-images.githubusercontent.com/39840269/207013212-c250be67-82c4-4a42-8198-90988371df42.mp4
-
-

@@ -21,7 +21,7 @@ Draw lines ✔️ <br />
 Entry camera ✔️ <br /> 
 Two reference lines ✔️<br />
 TensorRT ✔️<br />
-Web aplication <br />
+GUI Aplication ✔️<br />
 KIOSK
 
 ### Installation Jetson nano <br />
@@ -62,5 +62,9 @@ https://user-images.githubusercontent.com/39840269/189973714-8ec64ca3-15a4-4162-
 
 https://user-images.githubusercontent.com/39840269/198974789-df596829-4cc8-4084-820c-a9bf2f1e4fd6.mp4
 
-### Web aplication  <br />
+### Gui aplication  <br />
+![1673707891517](https://user-images.githubusercontent.com/39840269/212477925-261ba4ab-ffb1-4dc6-bd02-2f41f862020f.jpg)
+![1673707891529](https://user-images.githubusercontent.com/39840269/212477926-1a8ae225-2a44-4c56-b26d-3d1db1821a88.jpg)
+
+
 

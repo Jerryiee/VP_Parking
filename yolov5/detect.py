@@ -61,7 +61,6 @@ last_centroids =()
 tracker = EuclideanDistTracker()
 drawing= False
 drawing_ref= False
-free_spaces = 50
 
 @smart_inference_mode()
 def run(
@@ -188,7 +187,7 @@ def run(
                         x1 = int(xyxy[0] + (int(xyxy[2]-xyxy[0])/2))
                         y1 = int(xyxy[1] + (int(xyxy[3]-xyxy[1])/2))
                         centroid = (x1 , y1)
-                        cv2.circle(im0, centroid, radius=3, color=colors(c, True), thickness=-1) 
+                        cv2.circle(im0, centroid, radius=5, color=colors(c, True), thickness=-1) 
                         im_centroids.append(centroid)
                     if save_crop:
                         save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
@@ -202,8 +201,21 @@ def run(
                     tracker.id_count = 0
                 
                 detection = tracker.update(im_centroids)
+                detection_lines = [787, 336, 1212, 319]
+                detection_ref_lines = [781, 371, 1251, 357]
+
+                    #Open file in read mode and read second line
+                with open("kiosk/spaces.txt", "r") as f:
+                    lines = f.readlines()
+                    nums = lines[1].split()
+
+                #Convert strings to integers num[1] kapacita, num[2] volne, num[3] obsadene
+                nums = [int(n) for n in nums]
+
+
 
                 if(detection_lines is not None and detection_ref_lines is not None):
+                    
                     sx1, sy1, ex1, ey1 = detection_lines
                     sxr1, syr1, exr1, eyr1 = detection_ref_lines
 
@@ -237,8 +249,10 @@ def run(
                                 line_centroid_ref= m1 * (ix-sxr1) + syr1
                                 line_points = (nearest, im_centroids[i])
                                 #cv2.line(im0, nearest, im_centroids[i] ,(0,0,255),1) line betwen centroid and last near centroid
-                                #chcek if lines are intersecting
+
+                                 #chcek if lines are intersecting
                                 if(intersects(line_first, line_points)):
+
                                     #chcek if from what side cross the line and if is id on data
                                     if(line_centroid < iy and id not in data_in):
                                         data_in.append(id)
@@ -246,17 +260,9 @@ def run(
                                     elif(line_centroid > iy and id in data_out):
                                         cars_out += 1
                                         data_out.remove(id)
-                                        with open('spaces.txt','r') as f:
-                                            free_spaces = int(f.read())
-                                            free_spaces += 1
-                                            used_spaces = 25 - free_spaces
-
-                                        with open('spaces.txt','w') as f2:
-                                            f2.truncate() # clear previous content
-                                            f2.write(f'{str(free_spaces)}')
-                                        with open('usedspaces.txt','w') as f2:
-                                            f2.truncate() # clear previous content
-                                            f2.write(f'{str(used_spaces)}')
+                                        nums[1] += 1
+                                        nums[2] -= 1
+    
                                         #print(id)
                                 if(intersects(line_second, line_points)):
                                     #chcek if from what side cross the line and if is id on data
@@ -266,25 +272,35 @@ def run(
                                     elif(line_centroid_ref < iy and id in data_in):
                                         cars_in += 1
                                         data_in.remove(id)
-                                        with open('spaces.txt','r') as f:
-                                            free_spaces = int(f.read())
-                                            free_spaces -= 1
-                                            used_spaces = 25 - free_spaces
-
-                                        with open('spaces.txt','w') as f2:
-                                            f2.truncate() # clear previous content
-                                            f2.write(f'{str(free_spaces)}')
-                                        with open('usedspaces.txt','w') as f2:
-                                            f2.truncate() # clear previous content
-                                            f2.write(f'{str(used_spaces)}')
+                                        nums[1] -= 1
+                                        nums[2] += 1
 
 
+
+
+                    
+                    # Modify the result string
+                    nums_str = "        ".join([str(n) for n in nums])
+                    #Replace the original line with the modified one
+                    lines[1] = nums_str + "\n"
+                    with open("kiosk/spaces.txt", "w") as f:
+                        f.writelines(lines)
+                    #Open file in read mode and read second line
+                    with open("kiosk/spaces.txt", "r") as f:
+                        lines = f.readlines()
+                        nums = lines[1].split()
+
+                    #Convert strings to integers
+                    nums = [int(n) for n in nums]
 
                         
-                    cv2.putText(im0, str(cars_in), (sx1, sy1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,255), 1, cv2.LINE_AA)# show count
-                    cv2.putText(im0, str(cars_out), (sx1-25, sy1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0), 1, cv2.LINE_AA)# show count
-                    cv2.line(im0,(start_point),(end_point),(0,0,255),1) #intercepting line
-                    cv2.line(im0,(start_point_ref),(end_point_ref),(255,0,0),1) #intercepting line
+                    text1="volne {}"
+                    text2="obsadene {}"
+                    cv2.rectangle(im0, (1050, 700), (1650, 900), (255,255,255), thickness =-1)    
+                    cv2.putText(im0, text1.format(nums[1]), (1100, 785), cv2.FONT_HERSHEY_SIMPLEX, 2.5, (0,255,0), 2, cv2.LINE_AA)# show count
+                    cv2.putText(im0, text2.format(nums[2]), (1100, 850), cv2.FONT_HERSHEY_SIMPLEX, 2.5, (0,0,255), 2, cv2.LINE_AA)# show count
+                    cv2.line(im0,(start_point),(end_point),(0,0,255),2) #intercepting line
+                    cv2.line(im0,(start_point_ref),(end_point_ref),(255,0,0),2) #intercepting line
                         # line numbers
                         #cv2.putText(im0, str(b), (sx1-5, sy1), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,255), 1, cv2.LINE_AA)# show count
                         #cv2.putText(im0, str(b), (sxr1-5, syr1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0), 1, cv2.LINE_AA)# show count
@@ -437,7 +453,8 @@ def intersects(seg1, seg2):
 
     return False
 
-run(source="0", weights="yolov5n6.pt", conf_thres=0.25, imgsz=(640, 640), classes= cars, view_img=True, line_thickness=1, nosave=True, device = 0) 
+run(source="camera.mp4", weights="yolov5s.pt", conf_thres=0.25, imgsz=[200, 200], classes= cars, view_img=True, line_thickness=2, nosave=True, device = 0) 
+"""
 def main(opt):
     check_requirements(exclude=('tensorboard', 'thop'))
     run(**vars(opt))
@@ -446,3 +463,4 @@ def main(opt):
 if __name__ == "__main__":
     opt = parse_opt()
     main(opt)
+"""

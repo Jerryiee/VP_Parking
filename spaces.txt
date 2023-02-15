@@ -1,1 +1,2 @@
-20
+Kapacita Volne obsadene
+22       15        8

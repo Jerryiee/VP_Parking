@@ -1,5 +1,0 @@
-python3 detect.py --source rtsp://admin:1234@192.168.0.103:8080/h264_ulaw.sdp --weights yolov5n.engine --imgsz 640 640 --classes 2 7 --view-img --device 0 --half --nosave
-
-speed up Jetson Nano(fan needed)
-sudo nvpmodel -m 0 
-sudo jetson_clocks

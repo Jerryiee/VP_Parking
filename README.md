@@ -21,10 +21,15 @@ Draw lines ✔️ <br />
 Entry camera ✔️ <br /> 
 Two reference lines ✔️<br />
 TensorRT ✔️<br />
-GUI Aplication ✔️<br />
+GUI Application ✔️<br />
 KIOSK installation✔️<br />
-Installation Guide <br />
-Administrator access and kiosk window ✔️
+How to run Yolov5 <br />
+Administrator access and kiosk window✔️<br />
+### How to run Yolov5
+
+Everything about Yolov5 [here](https://github.com/ultralytics/yolov5) <br />
+For easy startup counting algorithm with neural network run ```python3 detect.py``` <br /> 
+For admin access run ```python3 manual.py``` inside kiosk folder <br /> 
 
 ### Installation Jetson nano <br />
 

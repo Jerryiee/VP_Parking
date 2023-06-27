@@ -77,6 +77,9 @@ https://user-images.githubusercontent.com/39840269/198974789-df596829-4cc8-4084-
 ![1681393521047](https://github.com/Jerryiee/VP_Parking/assets/39840269/b8abbeeb-12da-4da7-9913-300fb866b45b)
 
 ### Administrator access and kiosk window <br />
+![a sdsa](https://github.com/Jerryiee/VP_Parking/assets/39840269/36005a4e-7d69-4b55-9211-d7fd1626a948)
+
+### What the whole project looks like <br />
 ![image](https://github.com/Jerryiee/VP_Parking/assets/39840269/05b53497-e206-4275-aae8-9fb1a25534f1)
 
 

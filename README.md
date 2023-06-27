@@ -22,7 +22,8 @@ Entry camera ✔️ <br />
 Two reference lines ✔️<br />
 TensorRT ✔️<br />
 GUI Aplication ✔️<br />
-KIOSK
+KIOSK <br />
+Installation Guide <br />
 
 ### Installation Jetson nano <br />
 

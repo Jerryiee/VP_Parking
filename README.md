@@ -24,6 +24,7 @@ TensorRT ✔️<br />
 GUI Aplication ✔️<br />
 KIOSK <br />
 Installation Guide <br />
+Administrator access and kiosk window
 
 ### Installation Jetson nano <br />
 
@@ -64,8 +65,10 @@ https://user-images.githubusercontent.com/39840269/189973714-8ec64ca3-15a4-4162-
 https://user-images.githubusercontent.com/39840269/198974789-df596829-4cc8-4084-820c-a9bf2f1e4fd6.mp4
 
 ### Gui aplication  <br />
-![1673707891517](https://user-images.githubusercontent.com/39840269/212477925-261ba4ab-ffb1-4dc6-bd02-2f41f862020f.jpg)
-![1673707891529](https://user-images.githubusercontent.com/39840269/212477926-1a8ae225-2a44-4c56-b26d-3d1db1821a88.jpg)
+![1681393521047](https://github.com/Jerryiee/VP_Parking/assets/39840269/b8abbeeb-12da-4da7-9913-300fb866b45b)
+
+### Administrator access and kiosk window <br />
+![image](https://github.com/Jerryiee/VP_Parking/assets/39840269/05b53497-e206-4275-aae8-9fb1a25534f1)
 
 
 

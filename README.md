@@ -23,13 +23,8 @@ Two reference lines ✔️<br />
 TensorRT ✔️<br />
 GUI Application ✔️<br />
 KIOSK installation✔️<br />
-How to run Yolov5 <br />
+How to run Yolov5 ✔️<br />
 Administrator access and kiosk window✔️<br />
-### How to run Yolov5
-
-Everything about Yolov5 [here](https://github.com/ultralytics/yolov5) <br />
-For easy startup counting algorithm with neural network run ```python3 detect.py``` <br /> 
-For admin access run ```python3 manual.py``` inside kiosk folder <br /> 
 
 ### Installation Jetson nano <br />
 
@@ -54,6 +49,11 @@ sudo nvpmodel -m 0
 ### TensorRT - requiere install swap memory <br /> 
 ```python3 export.py --weights yolov5s.pt --include engine --imgsz 640 640 --device 0```
 
+### How to run Yolov5
+
+Everything about Yolov5 [here](https://github.com/ultralytics/yolov5) <br />
+For easy startup counting algorithm with neural network run ```python3 detect.py``` <br /> 
+For admin access run ```python3 manual.py``` inside kiosk folder <br /> 
 
 ### Counting lines <br />
 https://user-images.githubusercontent.com/39840269/188903893-9096fc75-efd7-4844-b93e-e8abec851ef7.mp4

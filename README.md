@@ -22,9 +22,9 @@ Entry camera ✔️ <br />
 Two reference lines ✔️<br />
 TensorRT ✔️<br />
 GUI Aplication ✔️<br />
-KIOSK <br />
+KIOSK installation✔️<br />
 Installation Guide <br />
-Administrator access and kiosk window
+Administrator access and kiosk window ✔️
 
 ### Installation Jetson nano <br />
 
@@ -63,6 +63,9 @@ https://user-images.githubusercontent.com/39840269/189973714-8ec64ca3-15a4-4162-
 ### Two reference lines  <br />
 
 https://user-images.githubusercontent.com/39840269/198974789-df596829-4cc8-4084-820c-a9bf2f1e4fd6.mp4
+
+### KIOSK installation <br />
+![WhatsApp Image 2023-02-15 at 11 22 46](https://github.com/Jerryiee/VP_Parking/assets/39840269/e62fa491-4038-4bd4-a17f-43799d1569c2)
 
 ### Gui aplication  <br />
 ![1681393521047](https://github.com/Jerryiee/VP_Parking/assets/39840269/b8abbeeb-12da-4da7-9913-300fb866b45b)

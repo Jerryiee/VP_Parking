@@ -46,7 +46,7 @@ sudo jetson_clocks
 sudo nvpmodel -m 0
 ```
 
-### TensorRT<br />
+### TensorRT - requiere install swap memory <br /> 
 ```python3 export.py --weights yolov5s.pt --include engine --imgsz 640 640 --device 0```
 
 
